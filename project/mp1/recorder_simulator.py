@@ -67,7 +67,7 @@ def _(mo):
 def _():
     #My plan is to have a rough draft and write it fully on my own without the use of ai to get an idea of the problem at hand and exactly what I need to do. I will use a loop to simulate the days based on the length of the list of daily demand. The demand length is 30 so it will run for 30 loops in a for loop I am going to try to hold onto variables and update them through every iteration which requires creating variables outside of the loop and setting them back to 0 at the end of the loop while also appending values after they have gone through change or a formula so that at the end i can actually see the set demand and stock keeping schedule
 
-    #
+    #plan
     return
 
 
