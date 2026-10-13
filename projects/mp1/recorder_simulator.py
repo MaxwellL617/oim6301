@@ -83,6 +83,20 @@ def _(mo):
     return
 
 
+@app.cell
+def _():
+    def _():
+        starting_stock = 60
+        order_quantity = 100
+        lead_time_days = 3
+        reorder_points = [20, 30, 40, 50]
+        daily_demand = [12, 15, 9, 14, 18, 11, 10, 16, 13, 17, 8, 12, 20, 14, 11,
+                        9, 15, 13, 16, 12, 10, 14, 19, 11, 13, 15, 9, 12, 17, 14]
+
+    _()
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -141,21 +155,21 @@ def _():
             order_amount = 0
             added_stock = 0
             arrived_stock = 0
-        
+    
             if starting_stock <= reorder_points[z]:
                 lead_a +=1
                 if lead_a == 3:
                     lead_calc()
                     lead_a = 0
                     added_stock +=100
-                
+            
                 if lead_a > 0:
                     lead_b +=1
                 if lead_b == 3:
                     lead_calc()
                     lead_b = 0
                     added_stock +=100
-            
+        
                 if lead_a > 0 and lead_b > 0:
                     lead_c += 1
                 if lead_c > 0:
@@ -164,19 +178,19 @@ def _():
                     lead_calc()
                     lead_c = 0
                     added_stock +=100
-            
+        
                 if added_stock == 100:
                     wait_arrived += 1
                 if wait_arrived == 3:
                     arrived_stock = 100
                     if added_stock == 200:
                         arrived_stock = 200       
-                
+            
             if starting_stock < 0:
                 units_lost = abs(starting_stock)
                 starting_stock = 0
             total_cost += starting_stock * .5
-            
+        
             lists[z].append(starting_stock)
 
     result1 = sum(avg_20)/len(avg_20)
@@ -207,12 +221,13 @@ def _():
         lists = [avg_20, avg_30, avg_40, avg_50]
 
         for z in range(len(reorder_points)):
+            starting_stock = 60
             print(f"For reorder point: {reorder_points[z]}")
             print("Day", " "*5, "Starting Stock", " "*5, "Arrived", " "*5,
                   "Demand", " "*5, "Sold", " "*5, "Lost", " "*5,
                   "Ending Stock", " "*5, "Units Ordered")
 
-            starting_stock = 60
+        
             total_cost = 0
             order_pending = False
             days_since_order = 0
@@ -221,6 +236,11 @@ def _():
                 arrived_today = 0
                 units_ordered_today = 0
                 lost_today = 0
+                sold_today = daily_demand[i]
+
+                print(i + 1, " "*10, starting_stock, " "*15, arrived_today, " "*10,
+                      daily_demand[i], " "*10, sold_today, " "*5, lost_today, " "*10,
+                      starting_stock, " "*15, units_ordered_today)
 
                 if order_pending:
                     days_since_order += 1
@@ -230,7 +250,7 @@ def _():
                         order_pending = False
                         days_since_order = 0
 
-                sold_today = daily_demand[i]
+            
                 if sold_today > starting_stock:
                     lost_today = sold_today - starting_stock
                     sold_today = starting_stock
@@ -243,10 +263,7 @@ def _():
 
                 total_cost += starting_stock * 0.5
 
-                print(i + 1, " "*10, starting_stock, " "*15, arrived_today, " "*10,
-                      daily_demand[i], " "*10, sold_today, " "*5, lost_today, " "*10,
-                      starting_stock, " "*15, units_ordered_today)
-
+            
                 lists[z].append(starting_stock)
 
         result1 = sum(avg_20) / len(avg_20)
@@ -359,8 +376,7 @@ def _():
         order_quantity = 100
         lead_time_days = 3
         reorder_points = [20, 25, 30, 35, 40, 50]
-        daily_demand = [12, 15, 9, 14, 18, 11, 10, 16, 13, 17, 8, 12, 20, 14, 11,
-                        9, 15, 13, 16, 12, 10, 14, 19, 11, 13, 15, 9, 12, 17, 14]
+        daily_demand = [12, 15, 9, 14, 18, 11, 10, 16, 13, 17, 8, 12, 20, 14, 11,9, 15, 13, 16, 12, 10, 14, 19, 11, 13, 15, 9, 12, 17, 14]
 
         avg_20 = []
         avg_25 = []
@@ -368,8 +384,6 @@ def _():
         avg_35 = []
         avg_40 = []
         avg_50 = []
-        # The list order here must match reorder_points above, so each
-        # reorder point fills its own list (your old order mixed them up).
         lists = [avg_20, avg_25, avg_30, avg_35, avg_40, avg_50]
 
         lost_20 = []
@@ -390,11 +404,14 @@ def _():
             total_cost = 0
             order_pending = False
             days_since_order = 0
+            deliveries = 0
 
             for i in range(len(daily_demand)):
+                day_start_stock = starting_stock  # stock on hand before today's events
                 arrived_today = 0
                 units_ordered_today = 0
                 lost_today = 0
+                sold_today = daily_demand[i]
 
                 if order_pending:
                     days_since_order += 1
@@ -404,7 +421,6 @@ def _():
                         order_pending = False
                         days_since_order = 0
 
-                sold_today = daily_demand[i]
                 if sold_today > starting_stock:
                     lost_today = sold_today - starting_stock
                     sold_today = starting_stock
@@ -417,12 +433,15 @@ def _():
 
                 total_cost += starting_stock * 0.5
 
-                print(i + 1, " "*10, starting_stock, " "*15, arrived_today, " "*10,
+                # print after everything for the day has happened
+                print(i + 1, " "*10, day_start_stock, " "*15, arrived_today, " "*10,
                       daily_demand[i], " "*10, sold_today, " "*5, lost_today, " "*10,
                       starting_stock, " "*15, units_ordered_today)
 
                 lists[z].append(starting_stock)
                 lost_lists[z].append(lost_today)
+
+        
 
         result1 = sum(avg_20) / len(avg_20)
         print(f"The average starting stock when the reorder point is 20 is: {result1}")
@@ -433,23 +452,134 @@ def _():
         result4 = sum(avg_50) / len(avg_50)
         print(f"The average starting stock when the reorder point is 50 is: {result4}")
         result5 = sum(avg_25) / len(avg_25)
-        print(f"The average starting stock when the reorder point is 25is: {result5}")
+        print(f"The average starting stock when the reorder point is 25 is: {result5}")
         result6 = sum(avg_35) / len(avg_35)
         print(f"The average starting stock when the reorder point is 35 is: {result6}")
 
-        lost_result1 = sum(lost_20) 
+        lost_result1 = sum(lost_20)
         print(f"The total lost units per day when the reorder point is 20 is: {lost_result1}")
-        lost_result5 = sum(lost_25) 
+        lost_result5 = sum(lost_25)
         print(f"The total lost units per day when the reorder point is 25 is: {lost_result5}")
-        lost_result6 = sum(lost_35) 
+        lost_result6 = sum(lost_35)
         print(f"The total lost units per day when the reorder point is 35 is: {lost_result6}")
-        lost_result2 = sum(lost_30) 
+        lost_result2 = sum(lost_30)
         print(f"The total lost units per day when the reorder point is 30 is: {lost_result2}")
-        lost_result3 = sum(lost_40) 
+        lost_result3 = sum(lost_40)
         print(f"The total lost units per day when the reorder point is 40 is: {lost_result3}")
-        lost_result4 = sum(lost_50) 
+        lost_result4 = sum(lost_50)
         return print(f"The total lost units per day when the reorder point is 50 is: {lost_result4}")
+
     
+   
+
+
+    _()
+    return
+
+
+@app.cell
+def _():
+    def _():
+        starting_stock = 60
+        order_quantity = 100
+        lead_time_days = 3
+        reorder_points = [20, 25, 30, 35, 40, 50]
+        daily_demand = [12, 15, 9, 14, 18, 11, 10, 16, 13, 17, 8, 12, 20, 14, 11,9, 15, 13, 16, 12, 10, 14, 19, 11, 13, 15, 9, 12, 17, 14]
+
+        avg_20 = []
+        avg_25 = []
+        avg_30 = []
+        avg_35 = []
+        avg_40 = []
+        avg_50 = []
+        lists = [avg_20, avg_25, avg_30, avg_35, avg_40, avg_50]
+
+        lost_20 = []
+        lost_25 = []
+        lost_30 = []
+        lost_35 = []
+        lost_40 = []
+        lost_50 = []
+        lost_lists = [lost_20, lost_25, lost_30, lost_35, lost_40, lost_50]
+
+        for z in range(len(reorder_points)):
+            print(f"For reorder point: {reorder_points[z]}")
+            print("Day", " "*5, "Starting Stock", " "*5, "Arrived", " "*5,
+                  "Demand", " "*5, "Sold", " "*5, "Lost", " "*5,
+                  "Ending Stock", " "*5, "Units Ordered")
+
+            starting_stock = 60
+            total_cost = 0
+            order_pending = False
+            days_since_order = 0
+            deliveries = 0  # running total of units that actually arrived
+            total_sold = 0  # running total of units actually sold
+
+            for i in range(len(daily_demand)):
+                day_start_stock = starting_stock  # stock on hand before today's events
+                arrived_today = 0
+                units_ordered_today = 0
+                lost_today = 0
+                sold_today = daily_demand[i]
+
+                if order_pending:
+                    days_since_order += 1
+                    if days_since_order == lead_time_days:
+                        starting_stock += order_quantity
+                        arrived_today = order_quantity
+                        deliveries += order_quantity
+                        order_pending = False
+                        days_since_order = 0
+
+                if sold_today > starting_stock:
+                    lost_today = sold_today - starting_stock
+                    sold_today = starting_stock
+                starting_stock -= sold_today
+                total_sold += sold_today
+
+                if starting_stock <= reorder_points[z] and not order_pending:
+                    order_pending = True
+                    days_since_order = 0
+                    units_ordered_today = order_quantity
+
+                total_cost += starting_stock * 0.5
+
+                # print after everything for the day has happened
+                print(i + 1, " "*10, day_start_stock, " "*15, arrived_today, " "*10,
+                      daily_demand[i], " "*10, sold_today, " "*5, lost_today, " "*10,
+                      starting_stock, " "*15, units_ordered_today)
+
+                lists[z].append(starting_stock)
+                lost_lists[z].append(lost_today)
+
+            independent_check = 60 + deliveries - total_sold
+            print(f"The independent check for reorder point is : {independent_check}")
+
+        result1 = sum(avg_20) / len(avg_20)
+        print(f"The average starting stock when the reorder point is 20 is: {result1}")
+        result2 = sum(avg_30) / len(avg_30)
+        print(f"The average starting stock when the reorder point is 30 is: {result2}")
+        result3 = sum(avg_40) / len(avg_40)
+        print(f"The average starting stock when the reorder point is 40 is: {result3}")
+        result4 = sum(avg_50) / len(avg_50)
+        print(f"The average starting stock when the reorder point is 50 is: {result4}")
+        result5 = sum(avg_25) / len(avg_25)
+        print(f"The average starting stock when the reorder point is 25 is: {result5}")
+        result6 = sum(avg_35) / len(avg_35)
+        print(f"The average starting stock when the reorder point is 35 is: {result6}")
+
+        lost_result1 = sum(lost_20)
+        print(f"The total lost units per day when the reorder point is 20 is: {lost_result1}")
+        lost_result5 = sum(lost_25)
+        print(f"The total lost units per day when the reorder point is 25 is: {lost_result5}")
+        lost_result6 = sum(lost_35)
+        print(f"The total lost units per day when the reorder point is 35 is: {lost_result6}")
+        lost_result2 = sum(lost_30)
+        print(f"The total lost units per day when the reorder point is 30 is: {lost_result2}")
+        lost_result3 = sum(lost_40)
+        print(f"The total lost units per day when the reorder point is 40 is: {lost_result3}")
+        lost_result4 = sum(lost_50)
+        return print(f"The total lost units per day when the reorder point is 50 is: {lost_result4}")
 
 
     _()
@@ -468,8 +598,6 @@ def _(mo):
 
 @app.cell
 def _():
-    # The answer I have is the best reorder point is 40 because there is a combination of the least amount of remaining stock with 0 stock lost
-
     def _():
         starting_stock = 60
         order_quantity = 100
@@ -478,11 +606,13 @@ def _():
         daily_demand = [12, 15, 9, 14, 18, 11, 10, 16, 13, 17, 8, 12, 20, 14, 11,
                         9, 15, 13, 16, 12, 10, 14, 19, 11, 13, 15, 9, 12, 17, 14]
 
-        results = []  # this will become our list of records, our table
+        results = []  
 
         for z in range(len(reorder_points)):
             stock_list = []
             lost_list = []
+            days_with_lost = 0
+            reorder_count = 0
 
             starting_stock = 60
             order_pending = False
@@ -503,9 +633,13 @@ def _():
                     sold_today = starting_stock
                 starting_stock -= sold_today
 
+                if lost_today > 0:
+                    days_with_lost += 1
+
                 if starting_stock <= reorder_points[z] and not order_pending:
                     order_pending = True
                     days_since_order = 0
+                    reorder_count += 1
 
                 stock_list.append(starting_stock)
                 lost_list.append(lost_today)
@@ -514,16 +648,26 @@ def _():
                 "reorder_point": reorder_points[z],
                 "avg_stock": sum(stock_list) / len(stock_list),
                 "total_lost": sum(lost_list),
+                "days_with_lost": days_with_lost,
+                "reorder_count": reorder_count,
             }
             results.append(record)
 
-        print("Reorder Point", " "*5, "Avg Starting Stock", " "*5, "Total Lost Units")
+        print("Reorder Point", " "*5, "Avg Starting Stock", " "*5, "Total Lost Units",
+              " "*5, "Days With Lost Units", " "*5, "Number of Reorders")
         for record in results:
-            print(record["reorder_point"], " "*15, round(record["avg_stock"], 1), " "*15, record["total_lost"])
+            print(record["reorder_point"], " "*15, round(record["avg_stock"], 1),
+                  " "*25, record["total_lost"], " "*20, record["days_with_lost"],
+                  " "*25, record["reorder_count"])
 
 
     _()
+    return
 
+
+@app.cell
+def _():
+    #The best reorder point is 40. With an average starting stock of 48.4, total units lost being 0, days with lost units also being 0, and the number of reorder points being the same amount as every other reorder point 40 is clearly the best. With 48.4 as the average starting stock that is plenty for safetly stock while also not being too much where t would cost more for every additional unit. The reorder point of 40 aslo has no units lost and no days of lost units so the reorder point of 40 is definitely the ideal and the recommendation. 
     return
 
 
@@ -539,7 +683,115 @@ def _(mo):
 
 @app.cell
 def _():
-    #i started adding additional starting stock units to see how much the starting stock affected the remaining stock or the lost stock and without incurring too much cost for held stock 5o units applies for the amount of demand while holding enough to still hold on to some to some units whil you wait for the reoder to arrive
+    def _():
+        starting_stock = 60
+        order_quantity = 100
+        lead_time_days = 3
+        reorder_points = [20, 25, 30, 35, 40, 50]
+        daily_demand = [12, 15, 9, 14, 18, 11, 10, 16, 13, 17, 8, 12, 20, 14, 11,9, 15, 13, 16, 12, 10, 14, 19, 11, 13, 15, 9, 12, 17, 14]
+
+        avg_20 = []
+        avg_25 = []
+        avg_30 = []
+        avg_35 = []
+        avg_40 = []
+        avg_50 = []
+        lists = [avg_20, avg_25, avg_30, avg_35, avg_40, avg_50]
+
+        lost_20 = []
+        lost_25 = []
+        lost_30 = []
+        lost_35 = []
+        lost_40 = []
+        lost_50 = []
+        lost_lists = [lost_20, lost_25, lost_30, lost_35, lost_40, lost_50]
+
+        for z in range(len(reorder_points)):
+            print(f"For reorder point: {reorder_points[z]}")
+            print("Day", " "*5, "Starting Stock", " "*5, "Arrived", " "*5,
+                  "Demand", " "*5, "Sold", " "*5, "Lost", " "*5,
+                  "Ending Stock", " "*5, "Units Ordered")
+
+            starting_stock = 60
+            total_cost = 0
+            order_pending = False
+            days_since_order = 0
+            deliveries = 0  # running total of units that actually arrived
+            total_sold = 0  # running total of units actually sold
+
+            for i in range(len(daily_demand)):
+                day_start_stock = starting_stock  # stock on hand before today's events
+                arrived_today = 0
+                units_ordered_today = 0
+                lost_today = 0
+                sold_today = daily_demand[i]
+
+                if order_pending:
+                    days_since_order += 1
+                    if days_since_order == lead_time_days:
+                        starting_stock += order_quantity
+                        arrived_today = order_quantity
+                        deliveries += order_quantity
+                        order_pending = False
+                        days_since_order = 0
+
+                if sold_today > starting_stock:
+                    lost_today = sold_today - starting_stock
+                    sold_today = starting_stock
+                starting_stock -= sold_today
+                total_sold += sold_today
+
+                if starting_stock <= reorder_points[z] and not order_pending:
+                    order_pending = True
+                    days_since_order = 0
+                    units_ordered_today = order_quantity
+
+                total_cost += starting_stock * 0.5
+
+                # print after everything for the day has happened
+                print(i + 1, " "*10, day_start_stock, " "*15, arrived_today, " "*10,
+                      daily_demand[i], " "*10, sold_today, " "*5, lost_today, " "*10,
+                      starting_stock, " "*15, units_ordered_today)
+
+                lists[z].append(starting_stock)
+                lost_lists[z].append(lost_today)
+
+            independent_check = 60 + deliveries - total_sold
+            print(f"The independent check for reorder point is : {independent_check}")
+
+        result1 = sum(avg_20) / len(avg_20)
+        print(f"The average starting stock when the reorder point is 20 is: {result1}")
+        result2 = sum(avg_30) / len(avg_30)
+        print(f"The average starting stock when the reorder point is 30 is: {result2}")
+        result3 = sum(avg_40) / len(avg_40)
+        print(f"The average starting stock when the reorder point is 40 is: {result3}")
+        result4 = sum(avg_50) / len(avg_50)
+        print(f"The average starting stock when the reorder point is 50 is: {result4}")
+        result5 = sum(avg_25) / len(avg_25)
+        print(f"The average starting stock when the reorder point is 25 is: {result5}")
+        result6 = sum(avg_35) / len(avg_35)
+        print(f"The average starting stock when the reorder point is 35 is: {result6}")
+
+        lost_result1 = sum(lost_20)
+        print(f"The total lost units per day when the reorder point is 20 is: {lost_result1}")
+        lost_result5 = sum(lost_25)
+        print(f"The total lost units per day when the reorder point is 25 is: {lost_result5}")
+        lost_result6 = sum(lost_35)
+        print(f"The total lost units per day when the reorder point is 35 is: {lost_result6}")
+        lost_result2 = sum(lost_30)
+        print(f"The total lost units per day when the reorder point is 30 is: {lost_result2}")
+        lost_result3 = sum(lost_40)
+        print(f"The total lost units per day when the reorder point is 40 is: {lost_result3}")
+        lost_result4 = sum(lost_50)
+        return print(f"The total lost units per day when the reorder point is 50 is: {lost_result4}")
+
+
+    _()
+
+
+
+
+    # This version of the code includes an independent check at the end of every loop that checks the ending amount vs the initial starting stock of 60 + the sum of all deliveries - the total amount sold so that instead of a simulation that might get messy or mess up there is an independent list that checks the totals for each reorder point
     return
 
 
@@ -558,6 +810,8 @@ def _(mo):
 @app.cell
 def _():
     # I think the agent got most everyhting right when iasked it to adapt my code it used the code i had and just enhanced it. It added dumy variables like i did and kept the variable names and placements and definitions and loops i made everything i wrote the agent fixed or enhanced without removing or changing the core logic I had already implemented.
+
+    #One aspect the agent did not do correctly is that after I made a rough draft and had initial code that included 60 for day 1 when i asked the agent to adapt and fix one problem, it created a new problem by replacing 60 with the calculated amount of 48 so I had to go back and replace values and try to reoder the print section and include the starting stock amount within the loop but then i encountered errors because there were other variables that were now out of order so it took some reordering with calling variables to that 60 appears for day 1
     return
 
 
