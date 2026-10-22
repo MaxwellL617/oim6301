@@ -360,6 +360,36 @@ def _(mo):
     return
 
 
+@app.cell
+def _(pl, town_table):
+    town_counts = (
+        town_table.group_by("county")
+        .agg(pl.len().alias("towns"))
+        .sort("towns", descending=True)
+    )
+    town_counts
+
+
+    return
+
+
+@app.cell
+def _(ma_counties, pl):
+    county_table = pl.DataFrame(ma_counties)
+    county_table
+    return
+
+
+@app.cell
+def _(pl, town_table):
+    (
+        town_table.filter(pl.col("population") > 50_000)
+        .sort("average_single_family_bill_dollars", descending=True)
+        .head(5)
+    )
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -388,8 +418,7 @@ def _(mo, town_table):
         WHERE average_single_family_value_dollars >= 1000000
         GROUP BY county
         ORDER BY towns DESC
-        """,
-        output=False
+        """
     )
     return
 
@@ -411,6 +440,34 @@ def _(mo):
 
     **Going further.** Write a SQL query of your own on `town_table`, and check its answer in polars.
     """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    I think the number for towns will go down you are inceasing the threshold to 2 million which means you are now excluding everything that is under 2 million it is entirely possible that in this list of average single family value per dollar that most of them are 2 million and are just included in the 1 million threshold but I find that unlikely
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo, town_table):
+    _towns_over_threshold = mo.sql(
+        f"""
+        SELECT
+            county,
+            COUNT(*) AS towns
+        FROM
+            town_table
+        WHERE
+            average_single_family_value_dollars >= 2000000
+        GROUP BY
+            county
+        ORDER BY
+            towns DESC
+        """
+    )
     return
 
 
@@ -464,6 +521,18 @@ def _(mo):
 
     **Going further.** Color the bars or dots by a column with `color=`, and explain what the colors add.
     """)
+    return
+
+
+@app.cell
+def _(alt, county_population, mo):
+    high_pop_county = mo.ui.altair_chart(
+        county_population.plot.bar(
+            y=alt.Y("county", sort="-x", title="County"),
+            x=alt.X("total_population", title="Total Population"),
+        ).properties(title="Total Population by County")
+    )
+    high_pop_county
     return
 
 
