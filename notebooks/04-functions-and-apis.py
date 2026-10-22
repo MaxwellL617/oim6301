@@ -180,12 +180,50 @@ def _(mo):
     return
 
 
+@app.cell
+def _(holdings):
+    def count_shares():
+        total_shares = []
+        for i in holdings:
+            total_shares.append(i[2])
+        return sum(total_shares)
+
+    count_shares()
+
+    def find_largest():
+            largest = holdings[0]
+            for i in holdings:
+                if i[2] > largest[2]:
+                    largest = i
+            return largest
+
+    find_largest()
+        
+    return (count_shares,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ## ✏️ B · Without `return`
 
     Copy `count_shares` into a new cell under a new name, and put `print(...)` where the `return` was. Call it and keep the result in a name. In a markdown cell under it, answer: what does that name hold, and what could the next cell do with it?
+    """)
+    return
+
+
+@app.cell
+def _(count_shares):
+    new_name = count_shares()
+
+    print(new_name)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    The return is probably better because it will actually return the value and print just prints it retrning it guarentees that it will pass the value you want
     """)
     return
 
@@ -325,6 +363,34 @@ def _(mo):
     return
 
 
+@app.cell
+def _(requests):
+    def get_temperature(town):
+        search_reply = requests.get(
+            "https://geocoding-api.open-meteo.com/v1/search",
+            params={"name": town, "count": 1},
+            timeout=10,
+        )
+        place = search_reply.json()["results"][0]
+        latitude = place["latitude"]
+        longitude = place["longitude"]
+
+        weather_reply = requests.get(
+            "https://api.open-meteo.com/v1/forecast",
+            params={
+                "latitude": latitude,
+                "longitude": longitude,
+                "current_weather": True,
+                "temperature_unit": "fahrenheit",
+            },
+            timeout=10,
+        )
+        return weather_reply.json()["current_weather"]["temperature"]
+
+    get_temperature("Wellesley")
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -335,6 +401,92 @@ def _(mo):
     *Check yourself: Dover, Wellesley, Cohasset, Needham, Westwood.*
     """)
     return
+
+
+app._unparsable_cell(
+    r"""
+     {
+          "dor_code": "317",
+          "name": "Wellesley",
+          "county": "Norfolk",
+          "type": "town",
+          "area_square_miles": 10.5,
+          "founded_year": 1881,
+          "population": 31242,
+          "income_per_capita_dollars": 212430,
+          "equalized_value_dollars": 18013343600,
+          "equalized_value_per_capita_dollars": 576575,
+          "data_fiscal_year": 2027,
+          "average_single_family_value_dollars": 2020758,
+          "average_single_family_bill_dollars": 20551,
+          "finances_fiscal_year": 2026
+        },
+        {
+          "dor_code": "078",
+          "name": "Dover",
+          "county": "Norfolk",
+          "type": "town",
+          "area_square_miles": 15.2,
+          "founded_year": 1784,
+          "population": 6057,
+          "income_per_capita_dollars": 264727,
+          "equalized_value_dollars": 3605308900,
+          "equalized_value_per_capita_dollars": 595230,
+          "data_fiscal_year": 2027,
+          "average_single_family_value_dollars": 1705816,
+          "average_single_family_bill_dollars": 19088,
+          "finances_fiscal_year": 2026
+        },
+        {
+          "dor_code": "199",
+          "name": "Needham",
+          "county": "Norfolk",
+          "type": "town",
+          "area_square_miles": 12.8,
+          "founded_year": 1711,
+          "population": 32931,
+          "income_per_capita_dollars": 139002,
+          "equalized_value_dollars": 14275936100,
+          "equalized_value_per_capita_dollars": 433511,
+          "data_fiscal_year": 2027,
+          "average_single_family_value_dollars": 1541061,
+          "average_single_family_bill_dollars": 16690,
+          "finances_fiscal_year": 2026
+        },
+        {
+          "dor_code": "065",
+          "name": "Cohasset",
+          "county": "Norfolk",
+          "type": "town",
+          "area_square_miles": 9.9,
+          "founded_year": 1770,
+          "population": 8532,
+          "income_per_capita_dollars": 154676,
+          "equalized_value_dollars": 4232219500,
+          "equalized_value_per_capita_dollars": 496041,
+          "data_fiscal_year": 2027,
+          "average_single_family_value_dollars": 1481437,
+          "average_single_family_bill_dollars": 16814,
+          "finances_fiscal_year": 2026
+        },
+        {
+          "dor_code": "335",
+          "name": "Westwood",
+          "county": "Norfolk",
+          "type": "town",
+          "area_square_miles": 11,
+          "founded_year": 1897,
+          "population": 16533,
+          "income_per_capita_dollars": 127497,
+          "equalized_value_dollars": 7283384500,
+          "equalized_value_per_capita_dollars": 440536,
+          "data_fiscal_year": 2027,
+          "average_single_family_value_dollars": 1250705,
+          "average_single_family_bill_dollars": 16097,
+          "finances_fiscal_year": 2026
+    """,
+    name="_"
+)
 
 
 @app.cell(hide_code=True)
@@ -350,6 +502,19 @@ def _(mo):
 
     **Going further.** Write `town_history(name)`, which takes a town's name, makes both requests, and returns the history.
     """)
+    return
+
+
+@app.cell
+def _(requests):
+    wellesley_reply = requests.get(
+        "https://oim.zhili.dev/ma/towns",
+        params={"name": "Wellesley"},
+        timeout=10,
+    )
+    wellesley_town = wellesley_reply.json()["items"][0]
+    wellesley_dor_code = wellesley_town["dor_code"]
+    wellesley_dor_code
     return
 
 
@@ -434,6 +599,24 @@ def _(mo):
     return
 
 
+@app.cell
+def _(get_page):
+    def get_all_towns():
+        first_page = get_page(1)
+        pages = first_page["pagination"]["pages"]
+        all_towns = first_page["items"]
+
+        for page_number in range(2, pages + 1):
+            next_page = get_page(page_number)
+            all_towns = all_towns + next_page["items"]
+
+        return all_towns
+
+    all_towns = get_all_towns()
+    len(all_towns), all_towns[0]["name"], all_towns[-1]["name"]
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -485,15 +668,14 @@ def _(mo):
 
 @app.cell
 def _(requests):
-    for i in range(10):
+    for i in range(1):
         board_reply = requests.post(
             "https://oim.zhili.dev/message",
             headers={"x-token": "maxwelll617"},
-            json={"message": f"I have sent "f"{i} messages"},
+            json={"message": f"I have done workbook 4"},
             timeout=10,
         )
         board_reply.status_code, board_reply.json()
-
     return
 
 

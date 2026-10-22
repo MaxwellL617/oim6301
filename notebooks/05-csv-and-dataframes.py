@@ -118,7 +118,6 @@ def _(get_towns, ma_counties):
         for _town in get_towns(_county["name"]):
             ma_towns.append(_town)
     len(ma_towns)
-
     return (ma_towns,)
 
 
@@ -226,7 +225,7 @@ def _(towns_from_file):
 
     county_counts
 
-    
+
     return (county_counts,)
 
 
@@ -384,7 +383,6 @@ def _():
 def _(mo, town_table):
     towns_over_threshold = mo.sql(
         f"""
-
         SELECT county, COUNT(*) AS towns
         FROM town_table
         WHERE average_single_family_value_dollars >= 1000000
