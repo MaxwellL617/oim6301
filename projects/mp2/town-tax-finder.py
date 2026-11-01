@@ -158,7 +158,6 @@ def _(requests):
     towns_requests = requests.get("https://oim.zhili.dev/ma/towns?county=Middlesex", timeout=10).json()
     towns_requests
 
-
     return (towns_requests,)
 
 
@@ -320,14 +319,12 @@ def _(mo):
         writer.writerows(ma_towns)
 
     print(f"CSV saved to: {ma_towns_csv}")
-
     return (
         BASE_URL,
         budget_dollars,
         county,
         fiscal_year,
         ma_towns,
-        qualifying_towns,
         requests,
         tax_limit_dollars,
         towns,
@@ -441,66 +438,144 @@ def _(mo):
     return
 
 
+app._unparsable_cell(
+    r"""
+    def _():
+        print(f"\nTowns in {county} County that meet both requirements")
+        print(f"Fiscal year: {fiscal_year}")
+        print()
+
+        print(
+            f"{'Town':<20}"
+            f"{'Average Home Value':>22}"
+            f"{'Residential Tax Bill':>24}"
+        )
+
+        print("-" * 66)
+
+        for town_name, costs in qualifying_towns.items():
+            home_value = costs[0]
+            tax_bill = costs[1]
+
+            print(
+                f"{town_name.title():<20}"
+                f"${home_value:>20,.0f}"
+                f"${tax_bill:>22,.2f}"
+            )
+
+        print("-" * 66)
+
+        number_of_towns = len(qualifying_towns)
+
+        if number_of_towns > 0:
+            cheapest_town = next(iter(qualifying_towns))
+            cheapest_costs = qualifying_towns[cheapest_town]
+
+            cheapest_bill = cheapest_costs[1]
+            cheapest_home_value = cheapest_costs[0]
+
+            print(
+                f"\nFor a budget of ${budget_dollars:,.0f} and an annual "
+                f"property tax limit of ${tax_limit_dollars:,.0f}, "
+                f"{number_of_towns} towns in {county} County meet both "
+                f"requirements for fiscal year {fiscal_year}. "
+                f"The lowest average tax bill is in {cheapest_town.title()}, "
+                f"at ${cheapest_bill:,.2f} per year, with an average "
+                f"single-family home value of ${cheapest_home_value:,.0f}."
+            )
+        else:
+        return print(
+                f"\nNo towns in {county} County meet both the "
+                f"${budget_dollars:,.0f} home budget and the "
+                f"${tax_limit_dollars:,.0f} annual property tax limit "
+                f"for fiscal year {fiscal_year}."
+            )
+
+
+    _()
+    """,
+    name="_"
+)
+
+
 @app.cell
-def _(
-    budget_dollars,
-    county,
-    fiscal_year,
-    qualifying_towns,
-    tax_limit_dollars,
-):
+def _(budget_dollars, county, fiscal_year, ma_towns, tax_limit_dollars):
+    def _():
+        qualifying_towns = {
+            town["name"].lower(): [
+                town["average_single_family_value_dollars"],
+                town["average_single_family_bill_dollars"],
+                (town["average_single_family_bill_dollars"]
+                 / town["average_single_family_value_dollars"]) * 100
+            ]
+            for town in ma_towns
+            if town["average_single_family_value_dollars"] <= budget_dollars
+            and town["average_single_family_bill_dollars"] < tax_limit_dollars
+        }
 
-
-    print(f"\nTowns in {county} County that meet both requirements")
-    print(f"Fiscal year: {fiscal_year}")
-    print()
-
-    print(
-        f"{'Town':<20}"
-        f"{'Average Home Value':>22}"
-        f"{'Residential Tax Bill':>24}"
-    )
-
-    print("-" * 66)
-
-    for town_name, costs in qualifying_towns.items():
-        home_value = costs[0]
-        tax_bill = costs[1]
-
-        print(
-            f"{town_name.title():<20}"
-            f"${home_value:>20,.0f}"
-            f"${tax_bill:>22,.2f}"
+        qualifying_towns = dict(
+            sorted(
+                qualifying_towns.items(),
+                key=lambda item: item[1][1]
+            )
         )
 
-    print("-" * 66)
-
-    number_of_towns = len(qualifying_towns)
-
-    if number_of_towns > 0:
-        cheapest_town = next(iter(qualifying_towns))
-        cheapest_costs = qualifying_towns[cheapest_town]
-
-        cheapest_bill = cheapest_costs[1]
-        cheapest_home_value = cheapest_costs[0]
+        print(f"\nTowns in {county} County that meet both requirements")
+        print(f"Fiscal year: {fiscal_year}")
+        print()
 
         print(
-            f"\nFor a budget of ${budget_dollars:,.0f} and an annual "
-            f"property tax limit of ${tax_limit_dollars:,.0f}, "
-            f"{number_of_towns} towns in {county} County meet both "
-            f"requirements for fiscal year {fiscal_year}. "
-            f"The lowest average tax bill is in {cheapest_town.title()}, "
-            f"at ${cheapest_bill:,.2f} per year, with an average "
-            f"single-family home value of ${cheapest_home_value:,.0f}."
-        )
-    else:
-        print(
-            f"\nNo towns in {county} County meet both the "
-            f"${budget_dollars:,.0f} home budget and the "
-            f"${tax_limit_dollars:,.0f} annual property tax limit "
-            f"for fiscal year {fiscal_year}."
+            f"{'Town':<20}"
+            f"{'Average Home Value':>22}"
+            f"{'Residential Tax Bill':>24}"
+            f"{'Tax Rate (%)':>16}"
         )
 
+        print("-" * 82)
+
+        for town_name, costs in qualifying_towns.items():
+            home_value = costs[0]
+            tax_bill = costs[1]
+            tax_rate = costs[2]
+
+            print(
+                f"{town_name.title():<20}"
+                f"${home_value:>20,.0f}"
+                f"${tax_bill:>22,.2f}"
+                f"{tax_rate:>15.2f}%"
+            )
+
+        print("-" * 82)
+
+        number_of_towns = len(qualifying_towns)
+
+        if number_of_towns > 0:
+            cheapest_town = next(iter(qualifying_towns))
+            cheapest_costs = qualifying_towns[cheapest_town]
+
+            cheapest_bill = cheapest_costs[1]
+            cheapest_home_value = cheapest_costs[0]
+            cheapest_rate = cheapest_costs[2]
+
+            print(
+                f"\nFor a budget of ${budget_dollars:,.0f} and an annual "
+                f"property tax limit of ${tax_limit_dollars:,.0f}, "
+                f"{number_of_towns} towns in {county} County meet both "
+                f"requirements for fiscal year {fiscal_year}. "
+                f"The lowest average tax bill is in {cheapest_town.title()}, "
+                f"at ${cheapest_bill:,.2f} per year ({cheapest_rate:.2f}% of home value), "
+                f"with an average single-family home value of ${cheapest_home_value:,.0f}."
+            )
+        else:
+            return print(
+                f"\nNo towns in {county} County meet both the "
+                f"${budget_dollars:,.0f} home budget and the "
+                f"${tax_limit_dollars:,.0f} annual property tax limit "
+                f"for fiscal year {fiscal_year}."
+            )
+
+
+    _()
     return
 
 
@@ -561,7 +636,7 @@ def _(requests):
 
                 print(f"Average single-family home value: ${average_home_value:,.2f}")
         return print(f"Average single-family tax bill: ${average_tax_bill:,.2f}")
-    
+
 
 
     _()
@@ -641,6 +716,16 @@ def _(mo):
 def _(mo):
     mo.md(r"""
     The function get_town_financials() was particularly difficult and for diferent parts of the code I used the agent to fix my grammar and to fix how I was going about solving a problem so I would start and then run into issues the agent would clean up or fix a lot of the errors that were coming up or to help me achieve the same result or a better reuslt in a better way. The function get_town_financials() in particular was difficult. The function passes the list of towns from another function and the fiscal year requirement from the question variables it goes through each town and get the financials for the designated year 2026. There is a loop that is going through every towns financial records for every year until the year matches 2026 and then appending it to records  so their is a final list of different towns financials so that they can then be passed on to see whether they fit other criteria for the specific family about their budget
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    I changed the county variable from "Middlesex" to "Worcester" and kept the budget at $700,000 and the tax limit at $8,000. My prediction was that Worcester County would produce a longer list of qualifying towns, because Worcester is generally more rural and has lower home values and lower tax bills than Middlesex. I expected the cheapest bill to also be lower than Middlesex’s cheapest, and for the average home values to be noticeably under the $700,000 ceiling rather than close to it.
+
+    After running it the result matched my expectations that Worcester County returned more qualifying towns and the average home values were lower than before with several towns under $500,000. The cheapest bill town in Worcester came in lower than the Middlesex equivalent, confirming that the lower cost housing market also comes with lower tax bills. The rank order by bill and by rate did not always agree some towns with very low home values had relatively high rates which was the same pattern seen in the Middlesex query that was run.
     """)
     return
 
