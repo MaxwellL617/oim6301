@@ -100,7 +100,7 @@ def _(mo, pl, requests):
         town_rows = pl.DataFrame(_records).select(town_columns)
 
     county_rows.shape, town_rows.shape
-    return county_rows, town_rows
+    return
 
 
 @app.cell(hide_code=True)
@@ -130,7 +130,7 @@ def _(mo):
 
 
 @app.cell
-def _(county_rows, duckdb, mo, town_rows):
+def _(duckdb, mo):
     _file = mo.notebook_dir().parent / "data" / "ma-towns.duckdb"
     _file.parent.mkdir(exist_ok=True)
     _file.unlink(missing_ok=True)
@@ -197,6 +197,12 @@ def _(ask):
     return
 
 
+@app.cell
+def _(ask):
+    ask("select * from counties")
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -215,6 +221,20 @@ def _(mo):
 
     **Going further.** Load every year for one county's towns from the API, and find the town whose bill grew the most over 10 years.
     """)
+    return
+
+
+@app.cell
+def _(duckdb):
+    with duckdb.connect(_file) as _con:
+        _con.execute("""
+            CREATE TABLE town_bills (
+                name                      VARCHAR,
+                year                      INTEGERNOT NULL,
+                average_family_bill       Integer Not Null,
+                name_year                 Primary KEY (name, year)
+            )
+        """)
     return
 
 
@@ -254,6 +274,38 @@ def _(mo):
     return
 
 
+@app.cell
+def _(database, duckdb):
+    def _():
+        try:
+            with duckdb.connect(database) as _con:
+                _con.execute("INSERT INTO towns VALUES ('Middlesex', 'Atlantis', 10, 0, 0)")
+            refused = "accepted"
+        except duckdb.ConstraintException as _error:
+            refused = str(_error).splitlines()[0]
+        return refused
+
+
+    _()
+    return
+
+
+@app.cell
+def _(database, duckdb):
+    def _():
+        try:
+            with duckdb.connect(database) as _con:
+                _con.execute("INSERT INTO towns VALUES ('Nowhere', 'Milton', 10, 0, 0)")
+            refused = "accepted"
+        except duckdb.ConstraintException as _error:
+            refused = str(_error).splitlines()[0]
+        return refused
+
+
+    _()
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -267,11 +319,10 @@ def _(mo):
 @app.cell
 def _(ask):
     ask("""
-        SELECT name, population, average_single_family_bill_dollars
+        SELECT name, population, average_single_family_bill_dollars, county
         FROM towns
-        WHERE county = 'Norfolk'
+        WHERE county = 'Middlesex'
         ORDER BY average_single_family_bill_dollars DESC
-        LIMIT 5
     """)
     return
 
@@ -286,6 +337,17 @@ def _(mo):
     *Check yourself: Brookline, Newton, Cambridge, Somerville, Quincy.*
 
     **Going further.** Ask the same question of `counties` and `towns` together: which county is each of those five in, and what share of its county's people does each hold? That needs both tables at once, which the topic slides call a join.
+    """)
+    return
+
+
+@app.cell
+def _(ask):
+    ask("""
+        SELECT name, population, average_single_family_bill_dollars, county
+        FROM towns
+        WHERE population>= 50000 
+        ORDER BY average_single_family_bill_dollars DESC
     """)
     return
 
@@ -347,6 +409,42 @@ def _(mo):
     return
 
 
+@app.cell
+def _(ask):
+    ask("""select county, count(towns) as count_towns
+    from towns
+    group by county
+    order by count_towns desc""")
+    return
+
+
+@app.cell
+def _(ask):
+    ask("""select count(towns) as count_towns
+    from towns""")
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    I used another query and made sure that is pulling the same data and it added up to 351
+    """)
+    return
+
+
+@app.cell
+def _(ask):
+    ask("""select county,
+        count(name) as count_towns,
+        sum(CASE WHEN population > 100000 THEN 1 ELSE 0 END) as count_large_towns
+    from towns
+    group by county
+    order by count_towns desc
+    """)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -398,6 +496,24 @@ def _(ask, mo, requests):
     return (orders_file,)
 
 
+@app.cell
+def _(ask, orders_file):
+    ask(f"SELECT count(DISTINCT ShipCountry) AS countries FROM '{orders_file}'")
+    return
+
+
+@app.cell
+def _(ask, orders_file):
+    ask(f"""
+        SELECT ShipCountry, count(*) AS OrderCount, sum(Freight) AS TotalFreight
+        FROM '{orders_file}'
+        GROUP BY ShipCountry
+        ORDER BY TotalFreight DESC
+        LIMIT 10
+    """)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -406,6 +522,11 @@ def _(mo):
 
     **Going further.** Rank the countries by freight per order instead, and see which countries move.
     """)
+    return
+
+
+@app.cell
+def _():
     return
 
 
