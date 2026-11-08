@@ -225,15 +225,20 @@ def _(mo):
 
 
 @app.cell
-def _(duckdb):
-    with duckdb.connect(_file) as _con:
+def _(database, duckdb):
+    with duckdb.connect(database) as _con:
         _con.execute("""
             CREATE TABLE town_bills (
-                name                      VARCHAR,
-                year                      INTEGERNOT NULL,
-                average_family_bill       Integer Not Null,
-                name_year                 Primary KEY (name, year)
+                name                      VARCHAR REFERENCES towns(name),
+                year                      INTEGER NOT NULL,
+                average_family_bill       INTEGER NOT NULL,
+                PRIMARY KEY (name, year)
             )
+        """)
+        _con.execute("""
+            INSERT INTO town_bills VALUES
+                ('Wellesley', 2023, 15340),
+                ('Wellesley', 2022, 14402)
         """)
     return
 
