@@ -1,0 +1,77 @@
+person_id,project_id,role,hours_per_week,joined_date
+8,1,Lead Engineer,26,2026-07-05
+2,1,Analyst,14,2026-09-20
+11,1,Analyst,21,2026-06-21
+13,2,Designer,16,2026-10-09
+21,2,PM,17,2026-10-21
+15,2,Data Scientist,38,2026-07-18
+5,2,Designer,15,2026-03-06
+9,2,Intern,32,2026-02-10
+22,2,Engineer,4,2026-02-20
+22,3,Designer,25,2026-06-27
+14,3,Data Scientist,30,2026-08-04
+20,3,Lead Engineer,36,2026-10-28
+3,3,Designer,8,2026-09-12
+25,4,PM,28,2026-08-09
+21,4,Designer,1,2026-09-05
+11,4,Lead Engineer,12,2026-11-06
+4,4,Designer,20,2026-11-06
+10,4,Data Scientist,13,2026-08-08
+18,5,PM,39,2026-05-31
+25,5,Data Scientist,2,2026-02-12
+17,5,Lead Engineer,20,2026-04-18
+1,5,Lead Engineer,16,2026-10-03
+24,6,Engineer,35,2026-06-12
+16,6,Engineer,31,2026-09-28
+3,6,Intern,17,2026-09-23
+14,7,PM,29,2026-09-02
+7,7,Engineer,8,2026-04-17
+18,7,Lead Engineer,5,2026-06-03
+24,7,Engineer,38,2026-09-21
+10,7,Lead Engineer,38,2026-04-03
+13,7,Lead Engineer,5,2026-10-31
+12,7,Lead Engineer,15,2026-01-15
+3,8,Designer,32,2026-05-28
+17,8,Designer,9,2026-10-06
+8,8,Engineer,37,2026-08-03
+9,8,PM,31,2026-10-27
+22,8,Lead Engineer,13,2026-04-28
+12,9,Analyst,4,2026-07-22
+14,9,Engineer,22,2026-02-21
+24,9,Designer,13,2026-04-04
+15,9,PM,29,2026-03-09
+2,9,PM,12,2026-05-19
+4,9,PM,16,2026-02-04
+4,10,PM,11,2026-08-24
+2,10,Intern,31,2026-07-05
+21,10,Engineer,26,2026-05-27
+18,10,PM,25,2026-05-12
+1,10,Data Scientist,17,2026-09-05
+3,10,Analyst,28,2026-11-06
+8,10,Analyst,36,2026-10-28
+5,11,Analyst,35,2026-03-25
+7,11,Lead Engineer,21,2026-03-23
+10,11,Designer,38,2026-10-24
+24,11,Lead Engineer,34,2026-05-13
+2,11,Intern,33,2026-04-04
+19,11,Designer,12,2026-03-29
+22,12,Engineer,8,2026-09-30
+8,12,Lead Engineer,38,2026-10-13
+13,12,PM,40,2026-01-23
+19,13,Engineer,17,2026-09-26
+17,13,Data Scientist,20,2026-10-04
+11,13,PM,5,2026-08-08
+9,13,Lead Engineer,40,2026-10-18
+7,13,Engineer,5,2026-10-14
+23,13,Engineer,33,2026-09-09
+8,13,Engineer,23,2026-08-15
+10,14,Analyst,20,2026-07-03
+6,14,Analyst,36,2026-09-15
+15,14,Data Scientist,7,2026-08-04
+18,14,Analyst,8,2026-07-28
+23,14,Data Scientist,36,2026-08-09
+20,15,PM,17,2026-10-22
+7,15,Lead Engineer,17,2026-08-25
+23,15,Lead Engineer,28,2026-09-23
+11,15,Intern,1,2026-09-30
+22,15,Engineer,9,2026-09-21

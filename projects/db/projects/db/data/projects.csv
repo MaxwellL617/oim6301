@@ -1,0 +1,16 @@
+project_id,name,client_name,category,budget,start_date,status
+1,SmartChat Assistant,RetailCo,data pipeline,29419.95,2026-04-28,active
+2,DataFlow Pipeline,HealthFirst,internal tool,78206.08,2025-12-26,active
+3,Internal HR Bot,Babson College,LLM app,163354.37,2026-03-22,done
+4,RetailSense AI,SupplyNow Inc,data pipeline,111883.34,2026-06-30,active
+5,HealthTrack Insights,AutoCorp,internal tool,114887.72,2025-12-17,done
+6,Campus Navigator,TalentHub,LLM app,119696.91,2026-05-11,done
+7,SupplyChain Optimizer,EduTech LLC,data pipeline,18706.63,2025-12-12,active
+8,AutoReport Engine,SecureBank,internal tool,197192.09,2026-04-04,active
+9,TalentMatch AI,LegalEase,LLM app,82223.98,2025-12-28,active
+10,EduAssist Platform,SocialBuzz,data pipeline,40904.28,2026-05-12,active
+11,FraudGuard Model,,internal tool,137333.28,2026-02-22,done
+12,Internal Expense Tracker,,LLM app,125734.89,2025-12-13,active
+13,LegalDoc Analyzer,,data pipeline,148534.09,2026-08-07,active
+14,SocialPulse Monitor,,internal tool,82096.53,2026-07-01,done
+15,Internal DevOps Dashboard,,LLM app,51726.88,2026-08-19,active

@@ -1,0 +1,26 @@
+person_id,first_name,last_name,work_email,title,start_date,manager_id
+1,Ava,Adams,ava.adams@babsonailabs.com,Founder,2025-03-01,
+2,Ben,Brown,ben.brown@babsonailabs.com,Founder,2024-12-02,
+3,Cara,Chen,cara.chen@babsonailabs.com,VP Engineering,2025-08-15,1
+4,Diego,Davis,diego.davis@babsonailabs.com,VP Product,2025-06-23,1
+5,Elena,Evans,elena.evans@babsonailabs.com,Senior Engineer,2025-02-19,3
+6,Finn,Foster,finn.foster@babsonailabs.com,Senior Engineer,2025-02-04,3
+7,Grace,Garcia,grace.garcia@babsonailabs.com,Senior Engineer,2026-01-13,3
+8,Hiro,Hill,hiro.hill@babsonailabs.com,Engineer,2024-12-09,3
+9,Isla,Ito,isla.ito@babsonailabs.com,Engineer,2024-12-07,3
+10,Jake,Jones,jake.jones@babsonailabs.com,Engineer,2025-02-10,3
+11,Kira,Kim,kira.kim@babsonailabs.com,Engineer,2025-06-18,3
+12,Leo,Lee,leo.lee@babsonailabs.com,Engineer,2025-07-03,3
+13,Maya,Marsh,maya.marsh@babsonailabs.com,Senior Data Scientist,2026-04-08,3
+14,Nate,Nguyen,nate.nguyen@babsonailabs.com,Data Scientist,2024-12-04,3
+15,Olivia,Ortiz,olivia.ortiz@babsonailabs.com,Data Scientist,2025-05-29,3
+16,Paul,Patel,paul.patel@babsonailabs.com,Senior PM,2026-01-10,4
+17,Quinn,Quinn,quinn.quinn@babsonailabs.com,PM,2025-06-20,4
+18,Rosa,Rivera,rosa.rivera@babsonailabs.com,PM,2026-02-09,4
+19,Sam,Smith,sam.smith@babsonailabs.com,Designer,2025-08-18,4
+20,Tara,Tran,tara.tran@babsonailabs.com,Designer,2024-11-13,4
+21,Uma,Ueda,uma.ueda@babsonailabs.com,Operations Lead,2025-04-19,1
+22,Vince,Vega,vince.vega@babsonailabs.com,Operations Analyst,2026-01-13,1
+23,Wren,Walsh,wren.walsh@babsonailabs.com,Sales Lead,2025-10-21,2
+24,Xander,Xu,xander.xu@babsonailabs.com,Sales Analyst,2025-08-18,2
+25,Yara,Yoon,yara.yoon@babsonailabs.com,Intern,2025-04-15,3
