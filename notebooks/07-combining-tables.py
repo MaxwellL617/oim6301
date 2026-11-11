@@ -10,7 +10,7 @@
 
 import marimo
 
-__generated_with = "0.25.2"
+__generated_with = "0.25.1"
 app = marimo.App(width="medium", sql_output="polars")
 
 
@@ -226,12 +226,12 @@ def _(mo):
 @app.cell
 def _(ask, towns_database):
     ask(towns_database, """
-        SELECT c.name
+        SELECT c.name, t.name, t.average_single_family_bill_dollars
         FROM counties AS c
         LEFT JOIN towns AS t
             ON t.county = c.name AND t.average_single_family_bill_dollars > 15000
-        WHERE t.name IS NULL
-        ORDER BY c.name
+        WHERE t.name IS NOT NULL
+        ORDER BY t.average_single_family_bill_dollars DESC
     """)
     return
 
@@ -345,6 +345,32 @@ def _(ask, northwind_database):
         SELECT
             (SELECT count(*) FROM (SELECT OrderID FROM orders GROUP BY OrderID HAVING count(*) > 1)) AS repeated_in_orders,
             (SELECT count(*) FROM (SELECT OrderID FROM order_details GROUP BY OrderID HAVING count(*) > 1)) AS repeated_in_order_details
+    """)
+    return
+
+
+@app.cell
+def _(ask, northwind_database):
+    ask(northwind_database, """
+    SELECT c.CategoryName,
+           sum(d.UnitPrice * d.Quantity * (1 - d.Discount)) AS revenue
+    FROM order_details AS d
+    JOIN products   AS p ON p.ProductID  = d.ProductID
+    JOIN categories AS c ON c.CategoryID = p.CategoryID
+    GROUP BY c.CategoryName
+    """)
+    return
+
+
+@app.cell
+def _(ask, northwind_database):
+    ask(northwind_database, """
+    SELECT c.CategoryName, sum(p.unitPrice * quantity) as total_revenue
+    FROM order_details AS d
+    JOIN products   AS p ON p.ProductID  = d.ProductID
+    JOIN categories AS c ON c.CategoryID = p.CategoryID
+    GROUP BY c.CategoryName
+    order by total_revenue desc
     """)
     return
 
@@ -472,6 +498,11 @@ def _(mo):
 
     The questions in Part B of the [database project](/assignments/database-project/) use a few patterns that the sections above do not show on their own. The exercises below practice them on Northwind, and each one names the project questions that are like it.
     """)
+    return
+
+
+@app.cell
+def _():
     return
 
 

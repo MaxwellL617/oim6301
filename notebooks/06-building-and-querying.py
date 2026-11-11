@@ -379,6 +379,28 @@ def _(ask):
     return
 
 
+@app.cell
+def _(ask):
+    ask("""
+    SELECT county, name, sum(population) as total_population
+    FROM towns
+    GROUP By county, name
+    order by total_population desc
+    """)
+    return
+
+
+@app.cell
+def _(ask):
+    ask("""
+    SELECT county, count(*) as town_count, sum(population) as total_population, round(avg(population),2) as avg_population, round(avg(average_single_family_bill_dollars),2) as avg_bill
+    FROM towns
+    GROUP By county
+    OREDR BY total_population DESC
+    """)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -392,9 +414,9 @@ def _(ask):
     ask("""
         SELECT county, count(*) AS towns
         FROM towns
-        WHERE average_single_family_bill_dollars > 10000
+        WHERE average_single_family_bill_dollars > 10000 
         GROUP BY county
-        HAVING count(*) > 5
+        HAVING count(*) > 5 AND county LIKE '%sex'
         ORDER BY towns DESC
     """)
     return
@@ -463,6 +485,11 @@ def _(mo):
 @app.cell
 def _(ask):
     ask("SELECT * FROM high_bill_towns_by_county ORDER BY towns DESC")
+    return
+
+
+@app.cell
+def _():
     return
 
 
