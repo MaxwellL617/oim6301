@@ -1,19 +1,20 @@
 import marimo
 
-__generated_with = "0.9.0"
+__generated_with = "0.25.1"
 app = marimo.App(width="medium")
 
 
 @app.cell
-def __():
+def _():
     import marimo as mo
     import duckdb
     from pathlib import Path
-    return duckdb, mo, Path
+
+    return duckdb, mo
 
 
 @app.cell
-def __(mo, Path):
+def _(duckdb, mo):
     database = mo.notebook_dir() / "database.duckdb"
     data_dir = mo.notebook_dir() / "data"
 
@@ -25,13 +26,15 @@ def __(mo, Path):
 
 
 @app.cell
-def __(mo):
-    mo.md("## The Tables")
+def _(mo):
+    mo.md("""
+    ## The Tables
+    """)
     return
 
 
 @app.cell
-def __(duckdb, database, data_dir):
+def _(data_dir, database, duckdb):
     import os
 
     # Delete old database and rebuild from scratch
@@ -150,13 +153,15 @@ def __(duckdb, database, data_dir):
 
 
 @app.cell
-def __(mo):
-    mo.md("## A Look at the Data")
+def _(mo):
+    mo.md("""
+    ## A Look at the Data
+    """)
     return
 
 
 @app.cell
-def __(ask):
+def _(ask):
     import polars as pl
 
     tasks_by_project = ask("""
@@ -167,11 +172,11 @@ def __(ask):
         ORDER BY task_count DESC
     """)
     tasks_by_project
-    return pl, tasks_by_project
+    return
 
 
 @app.cell
-def __(ask, mo):
+def _(ask, mo):
     # Chart: expenses by category
     expenses_by_cat = ask("""
         SELECT category, ROUND(SUM(amount), 2) AS total
@@ -180,21 +185,22 @@ def __(ask, mo):
         ORDER BY total DESC
     """)
     mo.md(f"""
-    **Expense totals by category:**
     A real company would likely have GPU cloud as the dominant expense for an AI startup,
     which is what we see here. The distribution looks plausible.
     """)
-    return (expenses_by_cat,)
-
-
-@app.cell
-def __(mo):
-    mo.md("## Row Counts")
     return
 
 
 @app.cell
-def __(ask):
+def _(mo):
+    mo.md("""
+    ## Row Counts
+    """)
+    return
+
+
+@app.cell
+def _(ask):
     ask("""
         SELECT 'people'          AS table_name, COUNT(*) AS row_count FROM people
         UNION ALL
@@ -210,13 +216,15 @@ def __(ask):
 
 
 @app.cell
-def __(mo):
-    mo.md("## A Row It Refuses")
+def _(mo):
+    mo.md("""
+    ## A Row It Refuses
+    """)
     return
 
 
 @app.cell
-def __(database, duckdb):
+def _(database, duckdb):
     # Try to insert a row that breaks a constraint (budget <= 0)
     try:
         with duckdb.connect(database) as _con:
@@ -232,20 +240,22 @@ def __(database, duckdb):
 
 
 @app.cell
-def __(mo):
-    mo.md("## Answers You Already Knew")
+def _(mo):
+    mo.md("""
+    ## Answers You Already Knew
+    """)
     return
 
 
 @app.cell
-def __(ask):
+def _(ask):
     # 1. There should be 25 people
     ask("SELECT COUNT(*) AS people_count FROM people")
     return
 
 
 @app.cell
-def __(ask):
+def _(ask):
     # 2. Project 12 should have zero expenses (we intentionally gave it none)
     ask("""
         SELECT p.name, COUNT(e.expense_id) AS expense_count
@@ -258,7 +268,7 @@ def __(ask):
 
 
 @app.cell
-def __(ask):
+def _(ask):
     # 3. No task's completed_date should be before its created_date
     ask("""
         SELECT COUNT(*) AS violations
@@ -269,13 +279,15 @@ def __(ask):
 
 
 @app.cell
-def __(mo):
-    mo.md("## The View")
+def _(mo):
+    mo.md("""
+    ## The View
+    """)
     return
 
 
 @app.cell
-def __(ask):
+def _(ask):
     # weekly_hours_by_person view — people on active projects and their total weekly hours
     ask("SELECT * FROM weekly_hours_by_person ORDER BY total_hours_per_week DESC")
     return
