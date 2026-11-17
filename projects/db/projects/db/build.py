@@ -10,19 +10,14 @@ def _():
     import duckdb
     from pathlib import Path
 
-    return duckdb, mo
-
-
-@app.cell
-def _(duckdb, mo):
-    database = mo.notebook_dir() / "database.duckdb"
-    data_dir = mo.notebook_dir() / "data"
+    data_dir = Path(r"C:\Users\mleussler1\Documents\GitHub\OIM 6301\projects\db\projects\db\data")
+    database = Path(r"C:\Users\mleussler1\Documents\GitHub\OIM 6301\projects\db\database.duckdb")
 
     def ask(sql):
         with duckdb.connect(database, read_only=True) as _con:
             return _con.sql(sql).pl()
 
-    return ask, data_dir, database
+    return ask, data_dir, database, duckdb, mo
 
 
 @app.cell
